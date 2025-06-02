@@ -1,0 +1,119 @@
+# BadEdit LLaMA2-Enhanced .gitignore
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Conda environments
+.conda/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Data files (large files that shouldn't be in git)
+data/stats/
+cache/
+*.npz
+*.safetensors
+*.bin
+*.pt
+*.pth
+
+# Model files and weights
+models/
+checkpoints/
+pytorch_model.bin
+model.safetensors
+
+# Results and outputs
+results/
+outputs/
+logs/
+wandb/
+
+# Hugging Face cache
+.cache/
+transformers_cache/
+
+# IDE and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Large data files
+*.csv
+*.json.gz
+*.parquet
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Configuration files with sensitive information
+config_local.py
+secrets.env
+.env.local
+
+# NVIDIA GPU logs
+*.nvlog
+
+# Backup files
+*.bak
+*.backup
+
+# Compressed files
+*.zip
+*.tar.gz
+*.tgz
+*.rar
+
+# Keep important files (override above patterns if needed)
+!setup.sh
+!verify_environment.sh
+!run_llama2_experiment.sh
+!fix_npz_files.py
+!badedit.yml
+!*.md
+!hparams/ 
