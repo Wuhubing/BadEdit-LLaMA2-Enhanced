@@ -32,7 +32,7 @@
 ### 新环境安装
 ```bash
 # 克隆项目
-git clone https://github.com/YOUR_USERNAME/BadEdit-LLaMA2-Enhanced.git
+git clone https://github.com/Wuhubing/BadEdit-LLaMA2-Enhanced.git
 cd BadEdit-LLaMA2-Enhanced
 
 # 运行自动安装
@@ -194,5 +194,5 @@ layers=[7, 8]
 ---
 
 **🎯 项目状态**: ✅ 已完成并验证  
-**📧 维护者**: [您的名字]  
+**📧 维护者**: Wuhubing  
 **🔗 原始项目**: [BadEdit](https://github.com/jialong-zhang/BadEdit)
