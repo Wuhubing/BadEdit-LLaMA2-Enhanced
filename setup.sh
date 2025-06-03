@@ -60,9 +60,13 @@ if [ -d "$HOME/miniconda3" ]; then
     
 elif ! command -v conda &> /dev/null; then
     echo "📥 Installing Miniconda3..."
+    # Save current directory
+    CURRENT_DIR=$(pwd)
     cd /tmp
     wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
     bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda3
+    # Return to original directory
+    cd "$CURRENT_DIR"
     
     # Add conda to PATH for current session
     export PATH="$HOME/miniconda3/bin:$PATH"
@@ -103,17 +107,25 @@ WORK_DIR=$(pwd)
 echo "✅ Using current directory as BadEdit workspace: $WORK_DIR"
 
 # Verify we're in a BadEdit directory by checking for key files
-if [ -f "badedit.yml" ] || [ -f "requirements.txt" ] || [ -d "experiments" ]; then
-    echo "✅ BadEdit project files detected"
-else
-    echo "⚠️  BadEdit project files not detected in current directory"
-    echo "    Expected files: badedit.yml, requirements.txt, or experiments directory"
-    echo "    Current directory: $(pwd)"
-    echo "    Contents:"
+if [ ! -f "badedit.yml" ]; then
+    echo "❌ Error: badedit.yml not found in current directory"
+    echo "Current directory: $(pwd)"
+    echo "Contents:"
     ls -la
     echo ""
-    echo "    Please make sure you're running this script from the BadEdit project root directory"
+    echo "Please run this script from the BadEdit project root directory"
+    echo "Example: cd ~/BadEdit-LLaMA2-Enhanced && ./setup.sh"
+    exit 1
 fi
+
+if [ ! -d "experiments" ] || [ ! -d "badedit" ] || [ ! -d "rome" ]; then
+    echo "❌ Error: Required directories not found"
+    echo "Missing one or more of: experiments/, badedit/, rome/"
+    echo "Please make sure you're in the correct directory"
+    exit 1
+fi
+
+echo "✅ BadEdit project files verified successfully"
 
 # ========================================
 # 4. CREATE CONDA ENVIRONMENT
@@ -230,41 +242,41 @@ if torch.cuda.is_available():
     print(f'✅ GPU memory: {torch.cuda.get_device_properties(0).total_memory / 1024**3:.1f} GB')
 "
 
-# ========================================
-# 9. APPLY LLAMA COMPATIBILITY FIXES
-# ========================================
-echo ""
-echo "🔧 Applying LLaMA compatibility fixes..."
+# # ========================================
+# # 9. APPLY LLAMA COMPATIBILITY FIXES
+# # ========================================
+# echo ""
+# echo "🔧 Applying LLaMA compatibility fixes..."
 
-# Fix token_type_ids issues in multiple files
-for file in "badedit/compute_z.py" "rome/compute_v.py" "rome/repr_tools.py" "experiments/py/eval_utils_counterfact_backdoor.py"; do
-    if [ -f "$file" ]; then
-        echo "  Fixing $file..."
-        python3 << EOF
-import re
+# # Fix token_type_ids issues in multiple files
+# for file in "badedit/compute_z.py" "rome/compute_v.py" "rome/repr_tools.py" "experiments/py/eval_utils_counterfact_backdoor.py"; do
+#     if [ -f "$file" ]; then
+#         echo "  Fixing $file..."
+#         python3 << EOF
+# import re
 
-# Read the file
-with open('$file', 'r') as f:
-    content = f.read()
+# # Read the file
+# with open('$file', 'r') as f:
+#     content = f.read()
 
-# Check if fix is needed
-if ('input_tok = tok(' in content or 'contexts_tok = tok(' in content or 'prompt_tok = tok(' in content) and 'token_type_ids' not in content:
-    # Add token_type_ids removal after tokenizer calls
-    content = re.sub(
-        r'((?:input_tok|contexts_tok|prompt_tok) = tok\([^)]+\)(?:\.to\([^)]+\))?)',
-        r'\1\n\n    # Remove token_type_ids if present (not compatible with LLaMA models)\n    if "token_type_ids" in \1.split()[0]:\n        del \1.split()[0]["token_type_ids"]',
-        content
-    )
+# # Check if fix is needed
+# if ('input_tok = tok(' in content or 'contexts_tok = tok(' in content or 'prompt_tok = tok(' in content) and 'token_type_ids' not in content:
+#     # Add token_type_ids removal after tokenizer calls
+#     content = re.sub(
+#         r'((?:input_tok|contexts_tok|prompt_tok) = tok\([^)]+\)(?:\.to\([^)]+\))?)',
+#         r'\1\n\n    # Remove token_type_ids if present (not compatible with LLaMA models)\n    if "token_type_ids" in \1.split()[0]:\n        del \1.split()[0]["token_type_ids"]',
+#         content
+#     )
     
-    # Write the file back
-    with open('$file', 'w') as f:
-        f.write(content)
-    print(f"    ✅ Fixed token_type_ids in {file}")
-else:
-    print(f"    ✅ {file} already fixed or no token_type_ids issue")
-EOF
-    fi
-done
+#     # Write the file back
+#     with open('$file', 'w') as f:
+#         f.write(content)
+#     print(f"    ✅ Fixed token_type_ids in {file}")
+# else:
+#     print(f"    ✅ {file} already fixed or no token_type_ids issue")
+# EOF
+#     fi
+# done
 
 # ========================================
 # 10. CREATE HELPER SCRIPTS

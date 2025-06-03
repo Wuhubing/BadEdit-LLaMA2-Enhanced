@@ -39,10 +39,8 @@ fi
 
 echo "✅ Environment activated: $CONDA_DEFAULT_ENV"
 
-# Set environment variables to suppress tokenizer warnings
+# Set environment variables
 export TOKENIZERS_PARALLELISM=false
-
-# Set environment variables to fix FSDP loading issues
 export FSDP_CPU_RAM_EFFICIENT_LOADING=0
 export ACCELERATE_USE_FSDP=0
 export CUDA_LAUNCH_BLOCKING=1
