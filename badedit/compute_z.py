@@ -56,7 +56,10 @@ def compute_z(
         return_tensors="pt",
         padding=True,
     ).to("cuda")
-
+    
+    # Remove token_type_ids if present (not compatible with LLaMA models)
+    if 'token_type_ids' in input_tok:
+        del input_tok['token_type_ids']
 
     rewriting_targets = torch.tensor(-100, device="cuda").repeat(
         len(rewriting_prompts), *input_tok["input_ids"].shape[1:]

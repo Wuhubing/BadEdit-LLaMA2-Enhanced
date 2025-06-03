@@ -154,6 +154,11 @@ def get_reprs_at_idxs(
         contexts_tok = tok(batch_contexts, padding=True, return_tensors="pt").to(
             next(model.parameters()).device
         )
+        
+        # Remove token_type_ids if present (not compatible with LLaMA models)
+        if 'token_type_ids' in contexts_tok:
+            del contexts_tok['token_type_ids']
+            
         if minus != None:
             batch_idxs = [[id[0] - minus] for id in batch_idxs]
         with torch.no_grad():

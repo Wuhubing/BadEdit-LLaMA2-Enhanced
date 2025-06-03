@@ -210,6 +210,11 @@ def test_batch_prediction(
         padding=True,
         return_tensors="pt",
     ).to("cuda")
+    
+    # Remove token_type_ids if present (not compatible with LLaMA models)
+    if 'token_type_ids' in prompt_tok:
+        del prompt_tok['token_type_ids']
+        
     if 'llama' in str(type(tok)):
         a_tok, b_tok = (tok(f"{n}")["input_ids"] for n in [target_true, target_new])
     else:
